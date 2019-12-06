@@ -39,7 +39,7 @@ namespace BankAccount
             TransactionStatus newAccountLog;
             try
             {
-                newAccountLog = CreateAccount(arguments[1], Convert.ToDecimal(arguments[arguments.Length-1]));
+                newAccountLog = CreateAccount(arguments[1], Convert.ToDecimal(arguments[^1]));
                 if (newAccountLog.Status == TransactionStatusCode.SUCCESS)
                     Console.WriteLine($"Successfully created account.\n    Your name is {newAccountLog.AccountOwner}\n    account number: {newAccountLog.AccountNumber}");
                 Console.WriteLine(newAccountLog.ToString());
@@ -106,9 +106,8 @@ namespace BankAccount
             }
             try
             {
-                var notes = new List<string>();
-                for (int j = 2; j++ < arguments.Length-1;) notes.Add(arguments[j]);
-                Console.WriteLine(bankaccount.MakeDeposit(Convert.ToDecimal(arguments[1]), DateTime.Now, String.Join(" ", notes)).ToString());
+                var notes = String.Join(' ', arguments[2..^0]);
+                Console.WriteLine(bankaccount.MakeDeposit(Convert.ToDecimal(arguments[1]), DateTime.Now, notes).ToString());
             }
             catch (FormatException)
             {
@@ -125,9 +124,8 @@ namespace BankAccount
             }
             try
             {
-                var notes = new List<string>();
-                for (int j = 2; j++ < arguments.Length-1;) notes.Add(arguments[j]);
-                Console.WriteLine(bankaccount.MakeWithdrawal(Convert.ToDecimal(arguments[1]), DateTime.Now, String.Join(" ", notes)).ToString());
+                var notes = String.Join(' ', arguments[2..^0]);
+                Console.WriteLine(bankaccount.MakeWithdrawal(Convert.ToDecimal(arguments[1]), DateTime.Now, notes).ToString());
             }
             catch (FormatException)
             {
@@ -149,9 +147,8 @@ namespace BankAccount
             }
             try
             {
-                var notes = new List<string>();
-                for (int j = 3; j++ < arguments.Length-1;) notes.Add(arguments[j]);
-                Console.WriteLine(bankaccount.MakeTransfer(Convert.ToDecimal(arguments[2]), DateTime.Now, Accounts[arguments[1]], String.Join(" ", notes)).ToString());
+                var notes = String.Join(' ', arguments[3..^0]);
+                Console.WriteLine(bankaccount.MakeTransfer(Convert.ToDecimal(arguments[2]), DateTime.Now, Accounts[arguments[1]], notes).ToString());
             }
             catch (FormatException)
             {
