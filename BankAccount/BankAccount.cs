@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace BankAccount
 {
     public class BankAccount
     {
-        private static int accountNumberSeed = 66709220;
+        private static int AccountNumberSeed = 66709220;
 
         private List<Transaction> AllTransactions = new List<Transaction>();
-        
-        public string Number { get; }
-        public string Owner { get; }
+
+        public string Password { get; set; }
+        public string Number { get; set; }
+        public string Owner { get; set; }
         public decimal Balance
         {
             get
@@ -22,20 +24,22 @@ namespace BankAccount
             }
         }
 
-        public BankAccount(string name, decimal initialBalance = 0M)
+        public BankAccount(string name, string password, decimal initialBalance = 0M)
         {
-            Number = (accountNumberSeed++).ToString();
+            Password = password;
             Owner = name;
             if (!TranscationChecker.IsInitialDepositValid(initialBalance))
                 throw new ArgumentOutOfRangeException(nameof(initialBalance), "Cannot open account");
-            AllTransactions.Add(new Transaction(Number, Owner, initialBalance, DateTime.Now, "Opens account"));
+            Number = (AccountNumberSeed++).ToString();
+            var firstTransaction = new Transaction(Number, Owner, initialBalance, DateTime.Now, "Opens account");
+            AllTransactions.Add(firstTransaction);
+            Serialize.WriteBankAccount(this);
+            Serialize.WriteTransaction(this, firstTransaction);
         }
 
-        public BankAccount(List<Transaction> allTransactions, string number, string owner)
+        public BankAccount()
         {
-            AllTransactions = allTransactions;
-            Number = number;
-            Owner = owner;
+            AccountNumberSeed += 1;
         }
 
         public static implicit operator string(BankAccount ba) => $"[Bank account of {ba.Owner} ID {ba.Number}]";
@@ -44,11 +48,18 @@ namespace BankAccount
 
         public override bool Equals(object obj) => false;
 
-        public override int GetHashCode() => HashCode.Combine(AllTransactions, Number, Owner, Balance, AccountHistory);
+        public override int GetHashCode() => HashCode.Combine(AllTransactions, Number, Owner, Balance, GetAccountHistory());
+
+        public void _PushTransaction(Transaction transaction)
+        {
+            AllTransactions.Add(transaction);
+        }
 
         private TransactionStatus _MakeDeposit(decimal amount, DateTime date, string note)
         {
-            AllTransactions.Add(new Transaction(Number, Owner, amount, date, note));
+            var transaction = new Transaction(Number, Owner, amount, date, note);
+            AllTransactions.Add(transaction);
+            Serialize.WriteTransaction(this, transaction);
             return new TransactionStatus(Number, Owner, TransactionStatusCode.SUCCESS, DateTime.Now, "Deposit successful");
         }
 
@@ -61,7 +72,9 @@ namespace BankAccount
 
         private TransactionStatus _MakeWithdrawal(decimal amount, DateTime date, string note)
         {
-            AllTransactions.Add(new Transaction(Number, Owner, -amount, date, note));
+            var transaction = new Transaction(Number, Owner, -amount, date, note);
+            AllTransactions.Add(transaction);
+            Serialize.WriteTransaction(this, transaction);
             return new TransactionStatus(Number, Owner, TransactionStatusCode.SUCCESS, DateTime.Now, "Withdrawal successful");
         }
 
@@ -83,18 +96,15 @@ namespace BankAccount
             return recipient._MakeDeposit(amount, date, note2);
         }
 
-        public string AccountHistory
+        public string GetAccountHistory()
         {
-            get
-            {
-                var report = new System.Text.StringBuilder();
-                report.AppendLine($"ACCOUNT SUMMARY FOR {Owner} {Number}:");
-                report.AppendLine($"{"Date",-25}{"Amount",-13}Note");
-                foreach (var item in AllTransactions)
-                    report.AppendLine($"{item.Date,-25:yyyy/MM/dd HH:mm:ss}{item.Amount+"$",-13:0.00}{item.Notes}");
-                report.Append($"{"Current balance:",-25}{Balance:0.00}$");
-                return report.ToString();
-            }
+            var report = new System.Text.StringBuilder();
+            report.AppendLine($"ACCOUNT SUMMARY FOR {Owner.ToUpper()} {Number}:");
+            report.AppendLine($"{"Transaction number",-25}{"Date",-25}{"Amount",-13}Note");
+            foreach (var item in AllTransactions)
+                report.AppendLine($"{item.TransactionNumber,-25}{item.Date,-25:yyyy/MM/dd HH:mm:ss}{item.Amount.ToString("C", CultureInfo.CreateSpecificCulture("fr-CA")),-13}{item.Notes}");
+            report.Append($"{"Current balance:",-25}{Balance.ToString("C", CultureInfo.CreateSpecificCulture("fr-CA"))}");
+            return report.ToString();
         }
     }
 }

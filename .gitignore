@@ -331,3 +331,6 @@ ASALocalRun/
 
 # vsc
 .vscode/
+
+# bankaccount
+bankAccount/accounts/

@@ -6,8 +6,8 @@ namespace BankAccount
     {
         public static void Garbage()
         {
-            var Alice = new BankAccount("Alice");
-            var Bob = new BankAccount("Bob", 16);
+            var Alice = new BankAccount("123456", "Alice");
+            var Bob = new BankAccount("123456", "Bob", 16);
 
             var tr = new TransactionStatus[5]
             {
@@ -18,8 +18,8 @@ namespace BankAccount
                 Bob.MakeWithdrawal(1329.5M, DateTime.Now, "buy computer")
             };
 
-            Console.WriteLine(Alice.AccountHistory);
-            Console.WriteLine(Bob.AccountHistory);
+            Console.WriteLine(Alice.GetAccountHistory());
+            Console.WriteLine(Bob.GetAccountHistory());
             Console.WriteLine("All transactions:");
             foreach (var item in tr) Console.WriteLine(item.ToString());
         }

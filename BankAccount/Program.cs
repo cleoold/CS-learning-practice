@@ -7,12 +7,12 @@ namespace BankAccount
     {
         private Dictionary<string, BankAccount> Accounts = new Dictionary<string, BankAccount>();
 
-        private TransactionStatus CreateAccount(string name, decimal initialBalance)
+        private TransactionStatus CreateAccount(string name, string password, decimal initialBalance)
         {
             BankAccount newAcc;
             try
             {
-                newAcc = new BankAccount(name, initialBalance);
+                newAcc = new BankAccount(name, password, initialBalance);
             }
             catch (ArgumentOutOfRangeException err)
             {
@@ -36,17 +36,19 @@ namespace BankAccount
                 Console.WriteLine("Account creation expects a name and an initial deposit.");
                 return;
             }
+            Console.Write("SET UP YOUR PASSWORD: ");
+            string pass = Console.ReadLine().Trim();
             TransactionStatus newAccountLog;
             try
             {
-                newAccountLog = CreateAccount(arguments[1], Convert.ToDecimal(arguments[^1]));
+                newAccountLog = CreateAccount(arguments[1], pass, Convert.ToDecimal(arguments[^1]));
                 if (newAccountLog.Status == TransactionStatusCode.SUCCESS)
                     Console.WriteLine($"Successfully created account.\n    Your name is {newAccountLog.AccountOwner}\n    account number: {newAccountLog.AccountNumber}");
                 Console.WriteLine(newAccountLog.ToString());
             }
             catch (FormatException)
             {
-                Console.WriteLine("Initial balance is not a number.");
+                Console.WriteLine("Initial balance is not a number. Account not created.");
                 return;
             }
         }
@@ -61,6 +63,13 @@ namespace BankAccount
             if (!Accounts.ContainsKey(arguments[1]))
             {
                 Console.WriteLine($"This account ({arguments[1]}) does not exist.");
+                return false;
+            }
+            Console.Write("ENTER YOUR PASSWORD: ");
+            string pass = Console.ReadLine().Trim();
+            if (pass != Accounts[arguments[1]].Password)
+            {
+                Console.WriteLine("Password not correct.");
                 return false;
             }
             return true;
@@ -176,7 +185,8 @@ namespace BankAccount
                     UserTransferSession(bankaccount, arguments);
                     break;
                 case "history":
-                    Console.WriteLine(bankaccount.AccountHistory);
+                    Console.WriteLine(bankaccount.GetAccountHistory());
+                    Serialize.WriteBankAccount(bankaccount);
                     break;
                 case "help":
                     Console.WriteLine(String.Format(ATMDialogue.UserActionLog, bankaccount.Owner));
@@ -189,7 +199,14 @@ namespace BankAccount
 
         static void Main(string[] args)
         {
-            new Program().MainMenu();
+            var program = new Program();
+            foreach (var fpath in System.IO.Directory.GetDirectories("accounts\\"))
+            {
+                var dirName = new System.IO.DirectoryInfo(fpath).Name;
+                var bankaccount = Serialize.RestoreBankAccount(dirName);
+                program.Accounts.Add(bankaccount.Number, bankaccount);
+            }
+            program.MainMenu();
             Console.WriteLine("Bye bye!");
         }
     }
