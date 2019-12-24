@@ -29,6 +29,10 @@ namespace CCalculator
                 {
                     Console.WriteLine("Failed to evaluate expression. The expression may be malformed.");
                 }
+                catch (OverflowException)
+                {
+                    Console.WriteLine("Failed to evaluate expression. Result too big.");
+                }
             }
         }
     }

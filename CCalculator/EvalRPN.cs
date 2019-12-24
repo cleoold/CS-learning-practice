@@ -34,6 +34,9 @@ namespace CCalculator
                 case "/":
                     stak.Push(lhs / rhs);
                     break;
+                case "^":
+                    stak.Push((decimal)System.Math.Pow((double)lhs, (double)rhs));
+                    break;
                 }
             }
             return stak.Pop();

@@ -5,7 +5,7 @@ using System.Text;
 namespace CCalculator
 {
     // (C++ source: Classic data structures in C++, T. A. Budd., 1994)
-    
+
     public static class ToRPN
     {
         private enum Operators
@@ -14,7 +14,8 @@ namespace CCalculator
             plus,
             minus,
             divide,
-            mul
+            mul,
+            pow
         }
 
         static private Dictionary<Operators, string> opString = new Dictionary<Operators, string>
@@ -22,7 +23,8 @@ namespace CCalculator
             { Operators.plus, " + " },
             { Operators.minus, " - " },
             { Operators.mul, " * " },
-            { Operators.divide, " / " }
+            { Operators.divide, " / " },
+            { Operators.pow, " ^ " }
         };
 
         static private void processOp(Operators op, Stack<Operators> opStack, StringBuilder result)
@@ -68,6 +70,9 @@ namespace CCalculator
                     break;
                 case '/':
                     processOp(Operators.divide, opStack, res);
+                    break;
+                case '^':
+                    processOp(Operators.pow, opStack, res);
                     break;
                 }
             }
