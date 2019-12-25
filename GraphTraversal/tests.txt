@@ -1,0 +1,14 @@
+Yukon NV 5
+Yukon Ontario 5
+Yukon Manitoba 4
+Yukon Nunavut 1
+NV Quebec 3
+Ontario Quebec 2
+Ontario Newfoundland 6
+Ontario Nunavut 4  
+Quebec Nunavut 7
+Nunavut Manitoba 8
+Manitoba Nunavut 7
+Manitoba Alberta 4
+Manitoba Saskatchewan 9
+Alberta Saskatchewan 4
