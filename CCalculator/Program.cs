@@ -8,7 +8,7 @@ namespace CCalculator
         {
             string usrinput;
             decimal res;
-            Console.ForegroundColor = ConsoleColor.Gray;
+            var color = Console.ForegroundColor;
             while (true)
             {
                 Console.WriteLine("\nInput expression; enter q to exit...");
@@ -19,7 +19,7 @@ namespace CCalculator
                 Console.Write("Parsed RPN expression: ");
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(rpn);
-                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = color;
                 try
                 {
                     res = EvalRPN.Eval(rpn);

@@ -30,13 +30,13 @@ namespace GraphTraversal
         public void Link(TName from, TName to, TLabel label)
         {
             Vertex<TName,TLabel> start, end;
-            start = _Vertices.Find(x => EqualityComparer<TName>.Default.Equals(from, x.Name));
+            start = Reference(from);
             if (start == null)
             {
                 start = new Vertex<TName, TLabel>(from);
                 _Vertices.Add(start);
             }
-            end = _Vertices.Find(x => EqualityComparer<TName>.Default.Equals(to, x.Name));
+            end = Reference(to);
             if (end == null)
             {
                 end = new Vertex<TName, TLabel>(to);

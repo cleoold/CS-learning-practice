@@ -83,6 +83,7 @@ namespace GraphTraversal
                     break;
                 case 'q':
                     return;
+
                 case 't': 
                     ags = usrinput.Split(" ");
                     if (ags.Length == 1 || !program.theGraph.Exists(ags[1]))
@@ -93,11 +94,22 @@ namespace GraphTraversal
                     Console.WriteLine($"WE ARE BUILDING THE SEARCH TREE AT ROOT {ags[1]}...");
                     bfst = new MakeSTree<string, int>(0, program.theGraph.Reference(ags[1]));
                     break;
+
                 case 'r':
-                    if (bfst != null) Console.WriteLine(bfst.ShowAllConnectedVertices());
+                    if (bfst == null)
+                    {
+                        Console.WriteLine("SEARCH TREE HAS NOT BEEN BUILT YET!");
+                        break;
+                    }
+                    Console.WriteLine(bfst.ShowAllConnectedVertices());
                     break;
+
                 case 'p':
-                    if (bfst == null) break;
+                    if (bfst == null)
+                    {
+                        Console.WriteLine("SEARCH TREE HAS NOT BEEN BUILT YET!");
+                        break;
+                    }
                     ags = usrinput.Split(" ");
                     if (ags.Length == 1) Console.WriteLine(bfst.ShowPaths());
                     else if (ags.Length == 2) Console.WriteLine(bfst.ShowPath(ags[1]));
@@ -119,9 +131,10 @@ p [vertex] -  print the path from the root to this vertex
 
         private static void PrintHelp()
         {
+            var color = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(Msg);
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = color;
         }
     }
 }
