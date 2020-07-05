@@ -9,6 +9,7 @@ namespace LL1Parse
         public const string Arrow = "->";
         public const string Union = "|";
 
+        // lhs must be non terminal
         public readonly Symbol Lhs;
         public readonly List<Symbol> Rhs;
 
@@ -17,8 +18,11 @@ namespace LL1Parse
             get => Rhs.Count == 0;
         }
 
+        /// <exception cref="InvalidSymbolException"></exception>
         public ProductionRule(Symbol lhs, List<Symbol> rhs)
         {
+            if (lhs?.Type != Symbol.Types.NonTerminal)
+                throw new InvalidSymbolException();
             Lhs = lhs;
             Rhs = rhs;
         }
