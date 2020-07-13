@@ -9,7 +9,7 @@ S' -> BoF S EoF
 S  -> x | y | z | ( S op S )
 op -> + | - | * | /
 
-BoF ( x - ( y * z ) ) EoF 
+BoF ( x - ( y * z ) ) EoF
 ```
 
 output:
@@ -20,15 +20,15 @@ Terminals    : {-, (, ), *, /, +, BoF, EoF, x, y, z}
 Start        : S'
 
 Productions:
-1. S' -> BoF S EoF
-2. S -> x
-3. S -> y
-4. S -> z
-5. S -> ( S op S )
-6. op -> +
-7. op -> -
-8. op -> *
-9. op -> /
+0. S' -> BoF S EoF
+1. S -> x
+2. S -> y
+3. S -> z
+4. S -> ( S op S )
+5. op -> +
+6. op -> -
+7. op -> *
+8. op -> /
 
 Nullable:
 S'   false
