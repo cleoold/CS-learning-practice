@@ -1,0 +1,97 @@
+﻿Non-terminals: {Ex, Ex', F, Mu, Mu', Pl, Pl', S'}
+Terminals    : {*, ^, +, BoF, EoF, x, y, z}
+Start        : S'
+
+Productions:
+0. S' -> BoF Pl EoF
+1. Pl -> Mu Pl'
+2. Pl' -> + Pl
+3. Pl' ->
+4. Mu -> Ex Mu'
+5. Mu' -> * Mu
+6. Mu' ->
+7. Ex -> F Ex'
+8. Ex' -> ^ Ex
+9. Ex' ->
+10. F -> x
+11. F -> y
+12. F -> z
+
+Nullable:
+S'   false 
+Pl   false 
+Mu   false 
+Pl'  true  
+Ex   false 
+Mu'  true  
+F    false 
+Ex'  true  
+
+First:
+Ex   {x, y, z}
+Ex'  {^}
+F    {x, y, z}
+Mu   {x, y, z}
+Mu'  {*}
+Pl   {x, y, z}
+Pl'  {+}
+S'   {BoF}
+
+Follow:
+Ex   {*, +, EoF}
+Ex'  {*, +, EoF}
+F    {*, ^, +, EoF}
+Mu   {+, EoF}
+Mu'  {+, EoF}
+Pl   {EoF}
+Pl'  {EoF}
+S'   {}
+
+Parse table:
+     *   ^   +   BoF   EoF   x    y    z    
+Ex                           7    7    7   
+Ex'  9   8   9         9                   
+F                            10   11   12  
+Mu                           4    4    4   
+Mu'  5       6         6                   
+Pl                           1    1    1   
+Pl'          2         3                   
+S'               0                         
+Grammar is LL1 parsable.
+
+Derivation of "BoF x + x * y * y ^ x + z EoF":
+BoF Pl EoF                                 (0. S' -> BoF Pl EoF)
+BoF Mu Pl' EoF                             (1. Pl -> Mu Pl')
+BoF Ex Mu' Pl' EoF                         (4. Mu -> Ex Mu')
+BoF F Ex' Mu' Pl' EoF                      (7. Ex -> F Ex')
+BoF x Ex' Mu' Pl' EoF                      (10. F -> x)
+BoF x Mu' Pl' EoF                          (9. Ex' ->)
+BoF x Pl' EoF                              (6. Mu' ->)
+BoF x + Pl EoF                             (2. Pl' -> + Pl)
+BoF x + Mu Pl' EoF                         (1. Pl -> Mu Pl')
+BoF x + Ex Mu' Pl' EoF                     (4. Mu -> Ex Mu')
+BoF x + F Ex' Mu' Pl' EoF                  (7. Ex -> F Ex')
+BoF x + x Ex' Mu' Pl' EoF                  (10. F -> x)
+BoF x + x Mu' Pl' EoF                      (9. Ex' ->)
+BoF x + x * Mu Pl' EoF                     (5. Mu' -> * Mu)
+BoF x + x * Ex Mu' Pl' EoF                 (4. Mu -> Ex Mu')
+BoF x + x * F Ex' Mu' Pl' EoF              (7. Ex -> F Ex')
+BoF x + x * y Ex' Mu' Pl' EoF              (11. F -> y)
+BoF x + x * y Mu' Pl' EoF                  (9. Ex' ->)
+BoF x + x * y * Mu Pl' EoF                 (5. Mu' -> * Mu)
+BoF x + x * y * Ex Mu' Pl' EoF             (4. Mu -> Ex Mu')
+BoF x + x * y * F Ex' Mu' Pl' EoF          (7. Ex -> F Ex')
+BoF x + x * y * y Ex' Mu' Pl' EoF          (11. F -> y)
+BoF x + x * y * y ^ Ex Mu' Pl' EoF         (8. Ex' -> ^ Ex)
+BoF x + x * y * y ^ F Ex' Mu' Pl' EoF      (7. Ex -> F Ex')
+BoF x + x * y * y ^ x Ex' Mu' Pl' EoF      (10. F -> x)
+BoF x + x * y * y ^ x Mu' Pl' EoF          (9. Ex' ->)
+BoF x + x * y * y ^ x Pl' EoF              (6. Mu' ->)
+BoF x + x * y * y ^ x + Pl EoF             (2. Pl' -> + Pl)
+BoF x + x * y * y ^ x + Mu Pl' EoF         (1. Pl -> Mu Pl')
+BoF x + x * y * y ^ x + Ex Mu' Pl' EoF     (4. Mu -> Ex Mu')
+BoF x + x * y * y ^ x + F Ex' Mu' Pl' EoF  (7. Ex -> F Ex')
+BoF x + x * y * y ^ x + z Ex' Mu' Pl' EoF  (12. F -> z)
+BoF x + x * y * y ^ x + z Mu' Pl' EoF      (9. Ex' ->)
+BoF x + x * y * y ^ x + z Pl' EoF          (6. Mu' ->)
+BoF x + x * y * y ^ x + z EoF              (3. Pl' ->)

@@ -1,0 +1,10 @@
+S' -> BoF Pl EoF
+Pl -> Mu Pl'
+Pl' -> + Pl |
+Mu -> Ex Mu'
+Mu' -> * Mu |
+Ex -> F Ex'
+Ex' -> ^ Ex |
+F -> x | y | z
+
+BoF x + x * y * y ^ x + z EoF

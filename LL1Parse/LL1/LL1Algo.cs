@@ -2,14 +2,15 @@ namespace LL1Parse
 {
     partial class LL1Algo
     {
-        public readonly CFG thecfg;
-        public NullableComputer Nullable { private set; get; }
-        public FirstComputer First { private set; get; }
-        public FollowComputer Follow { private set; get; }
+        public readonly CFG Thecfg;
+        public NullableComputer? Nullable { private set; get; }
+        public FirstComputer? First { private set; get; }
+        public FollowComputer? Follow { private set; get; }
+        public Parse? Parser { private set; get; }
 
         public LL1Algo(CFG thecfg)
         {
-            this.thecfg = thecfg;
+            this.Thecfg = thecfg;
         }
 
         public void Compute()
@@ -17,6 +18,7 @@ namespace LL1Parse
             Nullable = NullableComputer.Compute(this);
             First = FirstComputer.Compute(this);
             Follow = FollowComputer.Compute(this);
+            Parser = Parse.Compute(this);
         }
     }
 }

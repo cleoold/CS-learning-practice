@@ -2,7 +2,7 @@ using System;
 
 namespace LL1Parse
 {
-    class Symbol
+    sealed class Symbol
     {
         public enum Types
         {
@@ -19,7 +19,7 @@ namespace LL1Parse
             Type = group;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is Symbol symbol &&
                    Name == symbol.Name &&

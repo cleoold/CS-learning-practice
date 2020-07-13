@@ -1,3 +1,5 @@
+using System.Text;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace LL1Parse
@@ -25,6 +27,27 @@ namespace LL1Parse
                 if (!pair.Value.SetEquals(y[pair.Key])) return false;
             }
             return true;
+        }
+    }
+
+    static class SetUtil
+    {
+        public static string ToPrettyString(this IEnumerable<Symbol> set)
+        {
+            var sb = new StringBuilder("{")
+                .Append(string.Join(", ", set.OrderBy(e => e.Name)))
+                .Append("}");
+            return sb.ToString();
+        }
+    }
+
+    public static class StringExtensions
+    {
+        public static string PadCenter(this string str, int length)
+        {
+            int spaces = length - str.Length;
+            int padLeft = spaces / 2 + str.Length;
+            return str.PadLeft(padLeft).PadRight(length);
         }
     }
 }

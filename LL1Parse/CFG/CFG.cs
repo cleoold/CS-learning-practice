@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace LL1Parse
 {
@@ -37,7 +38,7 @@ namespace LL1Parse
         {
             var allsyms = new HashSet<string>();
             var nontermsyms = new HashSet<string>();
-            Symbol start = null;
+            Symbol start;
             var prods = new List<ProductionRule>();
 
             var processed = TokenizeProductionStrings(lines);
@@ -55,6 +56,7 @@ namespace LL1Parse
                 for (int i = 2; i < line.Length; ++i)
                     allsyms.Add(line[i]);
             }
+            int key = 0;
             foreach (var line in processed)
             {
                 var lhs = new Symbol(line[0], Symbol.Types.NonTerminal);
@@ -66,7 +68,7 @@ namespace LL1Parse
                         Symbol.Types.NonTerminal : Symbol.Types.Terminal
                     ));
                 }
-                prods.Add(new ProductionRule(lhs, rhs));
+                prods.Add(new ProductionRule(lhs, rhs, key++));
             }
 
             return new CFG(
@@ -115,6 +117,19 @@ namespace LL1Parse
             }
 
             return result;
+        }
+
+        public bool TryQueryTypedSymbolByName(string name, [NotNullWhen(true)] out Symbol? value)
+        {
+            var newSymbol = new Symbol(name, Symbol.Types.NonTerminal);
+            if (Symbols.Contains(newSymbol)
+                || Symbols.Contains(newSymbol = new Symbol(name, Symbol.Types.Terminal)))
+            {
+                value = newSymbol;
+                return true;
+            }
+            value = null;
+            return false;
         }
     }
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace LL1Parse
 {
-    using FirstType = Dictionary<Symbol, HashSet<Symbol>>;
+    using FirstResult = HashSet<Symbol>;
+    using FirstTable = Dictionary<Symbol, HashSet<Symbol>>;
 
     partial class LL1Algo
     {
@@ -11,31 +12,29 @@ namespace LL1Parse
         /// compute first set for all symbols in NonTerminal
         /// and for a sequence of arbitrary symbols
         /// </summary>
-        public class FirstComputer
+        public class FirstComputer : AbstractComputer<FirstResult>
         {
-            public readonly LL1Algo Algo;
+            public readonly List<FirstTable> Iterations;
 
-            public readonly List<FirstType> Iterations;
+            public override FirstTable Result { get => Iterations.Last(); }
 
-            public FirstType Result
+            private FirstComputer(LL1Algo algo, List<FirstTable> iterations)
+                : base(algo)
             {
-                get => Iterations.Last();
-            }
-
-            public FirstComputer(LL1Algo algo, List<FirstType> iterations)
-            {
-                Algo = algo;
                 Iterations = iterations;
             }
 
+            /// <exception cref="NotComputedException"></exception>
             public static FirstComputer Compute(LL1Algo algo)
             {
-                var iterations = new List<FirstType>();
+                _ = algo.Nullable ?? throw new NotComputedException(nameof(algo.Nullable));
 
-                var first = new FirstType();
+                var iterations = new List<FirstTable>();
+
+                var first = new FirstTable();
                 // initialize first iteration
-                foreach (var A in algo.thecfg.Nonterminals)
-                    first.Add(A, new HashSet<Symbol>());
+                foreach (var A in algo.Thecfg.Nonterminals)
+                    first.Add(A, new FirstResult());
                 do
                 {
                     if (iterations.Count == 0)
@@ -43,7 +42,7 @@ namespace LL1Parse
                     else
                         iterations.Add(DictUtil.Clone(first));
                     first = iterations.Last();
-                    foreach (var prod in algo.thecfg.Productions)
+                    foreach (var prod in algo.Thecfg.Productions)
                     {
                         foreach (var Bi in prod.Rhs)
                         {
@@ -56,7 +55,7 @@ namespace LL1Parse
                             {
                                 first[prod.Lhs].UnionWith(first[Bi]);
                             }
-                            if (!algo.Nullable.Result[Bi])
+                            if (!algo.Nullable[Bi])
                                 break;
                         }
                     }
@@ -68,10 +67,13 @@ namespace LL1Parse
             }
 
             // same algorithm as above
-            public HashSet<Symbol> ComputeSequence(IEnumerable<Symbol> tokens)
+            /// <exception cref="NotComputedException"></exception>
+            public FirstResult Sequence(IEnumerable<Symbol> syms)
             {
-                var result = new HashSet<Symbol>();
-                foreach (var Bi in tokens)
+                _ = Algo.Nullable ?? throw new NotComputedException(nameof(Algo.Nullable));
+
+                var result = new FirstResult();
+                foreach (var Bi in syms)
                 {
                     if (Bi.Type == Symbol.Types.Terminal)
                     {
@@ -80,9 +82,9 @@ namespace LL1Parse
                     }
                     else
                     {
-                        result.UnionWith(this.Result[Bi]);
+                        result.UnionWith(this[Bi]);
                     }
-                    if (!Algo.Nullable.Result[Bi])
+                    if (!Algo.Nullable[Bi])
                         break;
                 }
                 return result;
