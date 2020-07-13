@@ -77,7 +77,7 @@ namespace LL1Parse
                 {
                     Symbol A;
                     // top of stack is non terminal
-                    while ((A = stk.Peek()).Type == Symbol.Types.NonTerminal)
+                    while (stk.Count != 0 && (A = stk.Peek()).Type == Symbol.Types.NonTerminal)
                     {
                         stk.Pop();
                         HashSet<ProductionRule>? predicteds;
@@ -96,7 +96,7 @@ namespace LL1Parse
                         }
                     }
                     // top of stack is terminal
-                    if (!a.Equals(stk.Peek()))
+                    if (stk.Count == 0 || !a.Equals(stk.Peek()))
                         throw new CannotParseException($"parse failed at symbol {a}. tos mismatch");
                     read.Add(stk.Pop());
                 }
