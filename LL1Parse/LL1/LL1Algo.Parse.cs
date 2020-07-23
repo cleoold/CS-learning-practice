@@ -66,7 +66,7 @@ namespace LL1Parse
             {
                 if (!Parsable)
                     throw new CannotParseException("this language is not LL1 parsable");
-                
+
                 var syms = StringsToSymbols(line);
                 var res = new List<(ProductionRule, string)>();
                 var stk = new Stack<Symbol>();
@@ -116,7 +116,7 @@ namespace LL1Parse
             }
 
             /// <summary>
-            /// try getting the derivations of a list of a string
+            /// try getting the derivations of a string
             /// </summary>
             /// <exception cref="CannotParseException"></exception>
             public List<(ProductionRule, string)> EasyParse(string line)

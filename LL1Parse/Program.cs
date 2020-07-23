@@ -32,7 +32,7 @@ namespace LL1Parse
                 Console.WriteLine(p);
 
             Console.WriteLine("\nNullable:");
-            foreach (var (sym, val) in Algo.Nullable)
+            foreach (var (sym, val) in Algo.Nullable.OrderBy(e => e.Key.Name))
             {
                 Console.Write(sym.Name.PadRight(5));
                     Console.Write($"{(val ? "true " : "false")} ");

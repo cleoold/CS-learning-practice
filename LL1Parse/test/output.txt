@@ -18,14 +18,14 @@ Productions:
 12. F -> z
 
 Nullable:
-S'   false 
-Pl   false 
-Mu   false 
-Pl'  true  
-Ex   false 
-Mu'  true  
-F    false 
+Ex   false
 Ex'  true  
+F    false
+Mu   false
+Mu'  true
+Pl   false
+Pl'  true
+S'   false
 
 First:
 Ex   {x, y, z}

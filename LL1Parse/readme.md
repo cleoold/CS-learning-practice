@@ -31,9 +31,9 @@ Productions:
 8. op -> /
 
 Nullable:
-S'   false
+op   false 
 S    false
-op   false
+S'   false
 
 First:
 op   {-, *, /, +}
