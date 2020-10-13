@@ -1,0 +1,40 @@
+@page
+@model TodoListApi.Pages.TodoItems.IndexModel;
+
+@{
+    ViewData["Title"] = "Current";
+}
+
+<h1>Current todo items</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TodoListItems[0].Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TodoListItems[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TodoListItems[0].IsDone)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.TodoListItems) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsDone)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

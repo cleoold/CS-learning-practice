@@ -28,6 +28,8 @@ namespace TodoListApi
             services.AddDbContext<TodoContext>(option => option.UseInMemoryDatabase("TodoList"));
             services.AddControllers();
             services.AddControllers(options => options.InputFormatters.Insert(0, new RawRequestBodyFormatter()));
+
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,7 +43,11 @@ namespace TodoListApi
             app.UseRouting();
             app.UseCors();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints => endpoints.MapControllers());
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapRazorPages();
+            });
         }
     }
 }

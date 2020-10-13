@@ -1,6 +1,6 @@
 A project following the tutorial at https://docs.microsoft.com/en-ca/aspnet/core/tutorials/first-web-api?view=aspnetcore-3.1&tabs=visual-studio-code.
 
-What are different from the original example are this server adds logging and middleware.
+What are different from the original example are this server adds logging, middleware, and one Razor page (`localhost:5000/TodoItems`).
 
 To run it, do
 ```ps
