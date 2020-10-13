@@ -7,7 +7,7 @@ namespace TodoListApi.Controllers
     public class PingController
     {
         [HttpGet]
-        public ActionResult<object> Get()
+        public ActionResult<object> GetPing()
         {
             return new { Alive = true };
         }

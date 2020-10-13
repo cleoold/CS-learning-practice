@@ -23,8 +23,10 @@ namespace TodoListApi.Middleware
             }
             finally
             {
+                var req = ctx.Request;
+                var res = ctx.Response;
                 _logger.LogInformation(
-                    $"Request {ctx.Request?.Method} {ctx.Request?.Path.Value} {ctx.Request?.QueryString.Value} => {ctx.Response?.StatusCode}"
+                    $"Request {req?.Method} {req?.Path.Value}{req?.QueryString.Value} {req?.ContentType} => {res?.StatusCode}"
                 );
             }
         }

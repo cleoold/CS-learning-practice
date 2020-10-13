@@ -67,12 +67,55 @@ namespace TodoListApi.Controllers
             return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
         }
 
+        // POST: api/TodoItems/csv
+        /* Sample post body:
+            done eat dinner
+            undone do coding
+            undone sleep
+        */
+        [HttpPost("csv")]
+        public async Task<ActionResult<IEnumerable<TodoItem>>> PostTodoItemCsv([FromBody] string csv)
+        {
+            var items = csv.Split('\n')
+                .Select(line =>
+                {
+                    bool isDone;
+                    string name;
+                    if (line.StartsWith("done "))
+                    {
+                        isDone = true;
+                        name = line.Substring(5);
+                    }
+                    else if (line.StartsWith("undone "))
+                    {
+                        isDone = false;
+                        name = line.Substring(7);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    return new TodoItem { Name = name, IsDone = isDone };
+                })
+                .ToList();
+
+            if (items == null || items.Count() == 0 || items.Contains(null))
+                return BadRequest(new { reason = "Invalid csv format" });
+
+            _context.TodoItems.AddRange(items!);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"New items added via csv:\n{csv}");
+
+            return CreatedAtAction(nameof(GetTodoItems), items);
+        }
+
         // PUT: api/TodoItems/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         /* Sample post body:
             {
-            "id": 1,
+            "Id": 1,
             "Name": "eat",
             "IsDone": true
             }
