@@ -1,19 +1,135 @@
-﻿html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+﻿/* Common */
+
+html, body, a, span, textarea, input, button {
+    font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: rgb(231, 231, 231);
 }
 
-a, .btn-link {
-    color: #0366d6;
+html, body {
+    padding: 0;
+    margin: 0;
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+html {
+    background-color: rgb(58, 58, 58);
 }
 
-app {
-    position: relative;
+a {
+    color: rgb(223, 246, 255);
+}
+
+button {
+    color: black;
+    background-color: rgb(207, 186, 114);
+    border: none;
+    font-size: 1rem;
+}
+
+textarea, input {
+    border: none;
+    background-color: rgba(255, 255, 255, 0.205);
+    font-size: 1rem;
+}
+
+/* End Common */
+
+/* MainLayout.razor */
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* End MainLayout.razor */
+
+/* Index.razor */
+
+.login {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    min-width: 50vw;
+    background-color: rgb(63, 63, 63);
 }
+
+.login input {
+    height: 1.5rem;
+    padding: .2rem;
+    margin: 1rem;
+}
+
+.login button {
+    height: 2rem;
+    width: 5rem;
+}
+
+/* End Index.razor */
+
+/* User.razor */
+
+.playground {
+    min-width: 50vw;
+}
+
+.chatarea {
+    min-width: 50vw;
+}
+
+.chatarea .message-list-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 85vh;
+}
+
+.chatarea .message-list {
+    margin: 1rem .5rem;
+    padding: 0 .5rem;
+    height: 95%;
+    width: 90%;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(136, 136, 136) rgb(58, 58, 58);
+}
+
+.chatarea .message-user {
+    font-size: .9rem;
+}
+
+.chatarea .message-time {
+    font-size: .7rem;
+    color: rgb(151, 151, 151);
+}
+
+.chatarea .message-content {
+    display: inline-block;
+    margin: .3rem .1rem;
+    white-space: pre-line;
+}
+
+.chatarea .send-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15vh;
+}
+
+.chatarea .send-message textarea {
+    resize: none;
+    height: 4rem;
+    width: 80%;
+    margin: 0 .5rem;
+    padding: .5rem;
+}
+
+.chatarea .send-message button {
+    height: calc(4rem + 2*.5rem);
+    width: 10%;
+    margin: 0 .5rem;
+}
+
+/* end User.razor */

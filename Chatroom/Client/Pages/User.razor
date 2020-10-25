@@ -1,0 +1,32 @@
+﻿@page "/User/{username}"
+
+<div class="playground">
+
+</div>
+
+<div class="chatarea">
+    <div class="message-list-box">
+        <div class="message-list">
+            @foreach (var message in history)
+            {
+                <div class="message">
+                    <span class="message-user" style="@($"color:{message.User.Color}")">@message.User.Username</span>
+                    <span class="message-time">@message.Time</span>
+                    <br />
+                    <p class="message-content">@message.Content</p>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="send-message">
+        <textarea   @bind-value="messageInput"
+                    @bind-value:event="oninput"
+                    @onkeydown="@(async e =>
+                    {
+                        if (e.CtrlKey && e.Code == "Enter")
+                            await Send();
+                    })"
+        />
+        <button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+    </div>
+</div>

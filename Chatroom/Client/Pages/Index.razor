@@ -1,24 +1,11 @@
-﻿@page "/"
+@page "/"
 
-<div class="form-group">
-    <label>
-        User:
-        <input @bind="userInput" />
-    </label>
+<div class="login">
+    <!--if just use "@bind", then have to hit enter twice-->
+    <input  placeholder="Username"
+            @bind-value="usernameInput" @bind-value:event="oninput"
+            @onkeydown="@(e => { if (e.Code == "Enter") GotoChatroom(); })"
+    />
+    <br />
+    <button @onclick="GotoChatroom">Enter</button>
 </div>
-<div class="form-group">
-    <label>
-        Message:
-        <input @bind="messageInput" size="50" />
-    </label>
-</div>
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
-
-<hr>
-
-<ul id="messagesList">
-    @foreach (var message in history)
-    {
-        <li>@message.Time @message.User: @message.Content</li>
-    }
-</ul>
