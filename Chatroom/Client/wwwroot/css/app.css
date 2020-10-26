@@ -5,6 +5,10 @@ html, body, a, span, textarea, input, button {
     color: rgb(231, 231, 231);
 }
 
+textarea, select, input, button {
+    outline: none; /*chrome*/
+}
+
 html, body {
     padding: 0;
     margin: 0;
@@ -58,25 +62,22 @@ textarea, input {
 
 .login input {
     height: 1.5rem;
+    width: 20rem;
     padding: .2rem;
     margin: 1rem;
 }
 
 .login button {
     height: 2rem;
-    width: 5rem;
+    width: 10rem;
 }
 
 /* End Index.razor */
 
 /* User.razor */
 
-.playground {
-    min-width: 50vw;
-}
-
 .chatarea {
-    min-width: 50vw;
+    width: 80vw;
 }
 
 .chatarea .message-list-box {
@@ -91,13 +92,25 @@ textarea, input {
     padding: 0 .5rem;
     height: 95%;
     width: 90%;
+    list-style-type: none;
     overflow-y: scroll;
     scrollbar-width: thin;
     scrollbar-color: rgb(136, 136, 136) rgb(58, 58, 58);
 }
 
+.chatarea .message-list::-webkit-scrollbar {
+    width: 5px;
+}
+.chatarea .message-list::-webkit-scrollbar-track {
+    background-color: rgb(58, 58, 58);
+}
+.chatarea .message-list::-webkit-scrollbar-thumb {
+    background-color: rgb(136, 136, 136);
+}
+
 .chatarea .message-user {
     font-size: .9rem;
+    cursor: default;
 }
 
 .chatarea .message-time {
@@ -120,16 +133,53 @@ textarea, input {
 
 .chatarea .send-message textarea {
     resize: none;
-    height: 4rem;
+    height: 3rem;
     width: 80%;
     margin: 0 .5rem;
     padding: .5rem;
 }
 
 .chatarea .send-message button {
-    height: calc(4rem + 2*.5rem);
+    height: calc(3rem + 2*.5rem);
     width: 10%;
     margin: 0 .5rem;
+}
+
+.userlist-box {
+    width: 15vw;
+    height: 100vh;
+}
+
+.userlist-box .user-list {
+    padding: .5rem .5rem 1.5rem .5rem;
+    list-style-type: none;
+    background-color: rgb(49, 49, 49);
+    height: 90%;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(75, 75, 75) rgb(49, 49, 49);
+}
+
+.userlist-box .user-list::-webkit-scrollbar {
+    width: 5px;
+}
+.userlist-box .user-list::-webkit-scrollbar-track {
+    background-color: rgb(49, 49, 49);
+}
+.userlist-box .user-list::-webkit-scrollbar-thumb {
+    background-color: rgb(75, 75, 75);
+}
+
+.userlist-box .user-list-item {
+    margin: .4rem .4rem;
+    font-size: 1rem;
+    cursor: default;
+}
+
+.user-list .userlist-title {
+    margin: .4rem .3rem;
+    font-size: .8rem;
+    color: rgb(151, 151, 151);
 }
 
 /* end User.razor */

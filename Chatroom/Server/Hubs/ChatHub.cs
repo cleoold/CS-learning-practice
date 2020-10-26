@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
@@ -11,11 +12,13 @@ namespace Chatroom.Server.Hubs
     {
         private static Random _random = new Random();
 
-        private readonly ILogger<ChatHub> _logger;
-
         private static ConcurrentDictionary<string, User> _connectedUsers = new ConcurrentDictionary<string, User>();
 
         private static User adminUser = new User { Username = "admin", Color = "white" };
+
+        private readonly ILogger<ChatHub> _logger;
+
+        private DateTime utcNow { get => DateTime.Now.ToUniversalTime(); }
 
         public ChatHub(ILogger<ChatHub> logger)
         {
@@ -30,43 +33,50 @@ namespace Chatroom.Server.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var now = DateTime.Now;
+            var now = utcNow;
             var username = _connectedUsers[Context.ConnectionId].Username;
             _logger.LogInformation($"[{now}] [ADMIN] {username} disconnected.");
             _connectedUsers.TryRemove(Context.ConnectionId, out _);
             await base.OnDisconnectedAsync(exception);
 
-            await PushPublicMessageToAll(new PublicMessage
+            await ReceivePublicMessage(new PublicMessage
             {
                 User = adminUser, Content = $"{username} disconnected.", Time = now
             });
+
+            await ReceiveUserList();
         }
 
         public async Task NotifyAboutLogin(User user)
         {
-            var now = DateTime.Now;
+            var now = utcNow;
             _logger.LogInformation($"[{now}] [ADMIN] {user.Username} connected.");
             // bright color only
             user.Color = $"hsla({_random.Next(1,360)},100%,50%,1)";
             _connectedUsers[Context.ConnectionId] = user;
 
-            await PushPublicMessageToAll(new PublicMessage
+            await ReceivePublicMessage(new PublicMessage
             {
                 User = adminUser, Content = $"{user.Username} connected.", Time = now
             });
+
+            await ReceiveUserList();
         }
 
         public async Task SendPublicMessage(PublicMessage message)
         {
-            var now = DateTime.Now;
+            var now = utcNow;
             _logger.LogInformation($"[{now}] [PUBLIC] {message.User.Username}: {message.Content}");
-            await PushPublicMessageToAll(new PublicMessage
+            await ReceivePublicMessage(new PublicMessage
             {
                 User = _connectedUsers[Context.ConnectionId], Content = message.Content, Time = now
             });
         }
 
-        private Task PushPublicMessageToAll(PublicMessage message)
+        public Task ReceivePublicMessage(PublicMessage message)
             => Clients.All.SendAsync("ReceivePublicMessage", message);
+
+        public Task ReceiveUserList()
+            => Clients.All.SendAsync("ReceiveUserList", _connectedUsers.Values.ToList());
     }
 }
