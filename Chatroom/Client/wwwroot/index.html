@@ -29,6 +29,24 @@
         },
         scrollIntoView: function (selector) {
             document.querySelector(selector).scrollIntoView();
+        },
+        isScrolledIntoView: function (parentSelector, childSelector) {
+            var parentElem = document.querySelector(parentSelector);
+            var childElem = document.querySelector(childSelector);
+
+            if (!childElem) return true;
+
+            var parentViewTop = parentElem.scrollTop;
+            var parentViewBottom = parentViewTop + parentElem.clientHeight;
+
+            var elemTop = childElem.offsetTop;
+            var elemBottom = elemTop + childElem.clientHeight;
+
+            var isTotal = elemBottom <= parentViewBottom && elemTop >= parentViewTop;
+            var isPartial = (elemBottom > parentViewTop && elemTop < parentViewTop)
+                || (elemBottom > parentViewBottom && elemTop < parentViewBottom);
+
+            return isTotal || isPartial;
         }
     }
 </script>

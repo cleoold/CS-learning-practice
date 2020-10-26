@@ -52,8 +52,8 @@ namespace Chatroom.Pages
                 history.Add(message);
                 StateHasChanged();
 
-                if (message.IsOwn)
-                    await js.InvokeVoidAsync("chatroom.scrollIntoView", ".message-list li:last-child");
+                if (message.IsOwn || await IsLastMessageVisible())
+                    await ScrollToBottom();
             });
 
             hubConnection.On<List<SUser>>("ReceiveUserList", users =>
@@ -75,6 +75,12 @@ namespace Chatroom.Pages
 
             messageInput = "";
         }
+
+        public ValueTask ScrollToBottom()
+            => js.InvokeVoidAsync("chatroom.scrollIntoView", ".message-list li:last-child");
+
+        public ValueTask<bool> IsLastMessageVisible()
+            => js.InvokeAsync<bool>("chatroom.isScrolledIntoView", ".message-list", ".message-list li:nth-last-child(2)");
 
         public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
 
