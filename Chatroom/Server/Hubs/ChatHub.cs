@@ -41,7 +41,7 @@ namespace Chatroom.Server.Hubs
 
             await ReceivePublicMessage(new PublicMessage
             {
-                User = adminUser, Content = $"{username} disconnected.", Time = now
+                User = adminUser, Content = $"{username} disconnected.", Time = now, IsOwn = false
             });
 
             await ReceiveUserList();
@@ -57,7 +57,7 @@ namespace Chatroom.Server.Hubs
 
             await ReceivePublicMessage(new PublicMessage
             {
-                User = adminUser, Content = $"{user.Username} connected.", Time = now
+                User = adminUser, Content = $"{user.Username} connected.", Time = now, IsOwn = false
             });
 
             await ReceiveUserList();
@@ -67,14 +67,28 @@ namespace Chatroom.Server.Hubs
         {
             var now = utcNow;
             _logger.LogInformation($"[{now}] [PUBLIC] {message.User.Username}: {message.Content}");
-            await ReceivePublicMessage(new PublicMessage
+
+            var mymsg = new PublicMessage
             {
-                User = _connectedUsers[Context.ConnectionId], Content = message.Content, Time = now
-            });
+                User = _connectedUsers[Context.ConnectionId], Content = message.Content, Time = now, IsOwn = true
+            };
+            var theirmsg = new PublicMessage(mymsg) { IsOwn = false };
+
+            await Task.WhenAll(ReceivePublicMessage(mymsg, ToWhom.CLIENT), ReceivePublicMessage(theirmsg, ToWhom.OTHER));
         }
 
-        public Task ReceivePublicMessage(PublicMessage message)
-            => Clients.All.SendAsync("ReceivePublicMessage", message);
+        public enum ToWhom { CLIENT, OTHER, ALL }
+
+        public Task ReceivePublicMessage(PublicMessage message, ToWhom who = ToWhom.ALL)
+        {
+            const string func = "ReceivePublicMessage";
+            switch (who)
+            {
+                case ToWhom.CLIENT: return Clients.Caller.SendAsync(func, message);
+                case ToWhom.OTHER: return Clients.Others.SendAsync(func, message);
+                case ToWhom.ALL: default: return Clients.All.SendAsync(func, message);
+            }
+        }
 
         public Task ReceiveUserList()
             => Clients.All.SendAsync("ReceiveUserList", _connectedUsers.Values.ToList());

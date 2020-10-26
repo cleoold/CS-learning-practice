@@ -24,9 +24,15 @@ a {
 
 button {
     color: black;
-    background-color: rgb(207, 186, 114);
+    background-color: rgb(202, 171, 69);
     border: none;
     font-size: 1rem;
+}
+button:hover {
+    filter: brightness(.9);
+}
+button:active {
+    filter: brightness(.8);
 }
 
 textarea, input {
@@ -94,6 +100,7 @@ textarea, input {
     width: 90%;
     list-style-type: none;
     overflow-y: scroll;
+    scroll-behavior: smooth;
     scrollbar-width: thin;
     scrollbar-color: rgb(136, 136, 136) rgb(58, 58, 58);
 }
@@ -106,6 +113,13 @@ textarea, input {
 }
 .chatarea .message-list::-webkit-scrollbar-thumb {
     background-color: rgb(136, 136, 136);
+}
+
+.chatarea .message {
+    padding: .2rem .3rem;
+}
+.chatarea .message:hover {
+    background-color: rgb(65, 65, 65);
 }
 
 .chatarea .message-user {
@@ -156,6 +170,7 @@ textarea, input {
     background-color: rgb(49, 49, 49);
     height: 90%;
     overflow-y: scroll;
+    scroll-behavior: smooth;
     scrollbar-width: thin;
     scrollbar-color: rgb(75, 75, 75) rgb(49, 49, 49);
 }

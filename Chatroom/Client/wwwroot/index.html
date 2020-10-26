@@ -26,6 +26,9 @@
     window.chatroom = {
         setTitle: function (title) {
             document.title = title;
+        },
+        scrollIntoView: function (selector) {
+            document.querySelector(selector).scrollIntoView();
         }
     }
 </script>

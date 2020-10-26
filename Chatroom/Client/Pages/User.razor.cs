@@ -47,10 +47,13 @@ namespace Chatroom.Pages
 
         private void RegisterHubEvents()
         {
-            hubConnection.On<PublicMessage>("ReceivePublicMessage", message =>
+            hubConnection.On<PublicMessage>("ReceivePublicMessage", async message =>
             {
                 history.Add(message);
                 StateHasChanged();
+
+                if (message.IsOwn)
+                    await js.InvokeVoidAsync("chatroom.scrollIntoView", ".message-list li:last-child");
             });
 
             hubConnection.On<List<SUser>>("ReceiveUserList", users =>
