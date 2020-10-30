@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SignalR;
@@ -13,6 +14,8 @@ namespace Chatroom.Server.Hubs
         private static Random _random = new Random();
 
         private static ConcurrentDictionary<string, User> _connectedUsers = new ConcurrentDictionary<string, User>();
+
+        private static Queue<PublicMessage> _lastMessages = new Queue<PublicMessage>();
 
         private static User adminUser = new User { Username = "admin", Color = "white" };
 
@@ -55,12 +58,15 @@ namespace Chatroom.Server.Hubs
             user.Color = $"hsla({_random.Next(1,360)},100%,50%,1)";
             _connectedUsers[Context.ConnectionId] = user;
 
-            await ReceivePublicMessage(new PublicMessage
-            {
-                User = adminUser, Content = $"{user.Username} connected.", Time = now, IsOwn = false
-            });
+            await Task.WhenAll(ReceiveLastPublicMessages(), ReceiveUserList());
 
-            await ReceiveUserList();
+            var mymsg = new PublicMessage
+            {
+                User = adminUser, Content = $"{user.Username} connected.", Time = now, IsOwn = true
+            };
+            var theirmsg = new PublicMessage(mymsg) { IsOwn = false };
+
+            await Task.WhenAll(ReceivePublicMessage(mymsg, ToWhom.CLIENT), ReceivePublicMessage(theirmsg, ToWhom.OTHER));
         }
 
         public async Task SendPublicMessage(PublicMessage message)
@@ -75,6 +81,13 @@ namespace Chatroom.Server.Hubs
             var theirmsg = new PublicMessage(mymsg) { IsOwn = false };
 
             await Task.WhenAll(ReceivePublicMessage(mymsg, ToWhom.CLIENT), ReceivePublicMessage(theirmsg, ToWhom.OTHER));
+
+            lock (_lastMessages)
+            {
+                while (_lastMessages.Count > 20)
+                    _lastMessages.TryDequeue(out _);
+                _lastMessages.Enqueue(theirmsg);
+            }
         }
 
         public enum ToWhom { CLIENT, OTHER, ALL }
@@ -92,5 +105,13 @@ namespace Chatroom.Server.Hubs
 
         public Task ReceiveUserList()
             => Clients.All.SendAsync("ReceiveUserList", _connectedUsers.Values.ToList());
+
+        public Task ReceiveLastPublicMessages()
+        {
+            List<PublicMessage>? messages;
+            lock (_lastMessages)
+                messages = _lastMessages.ToList();
+            return Clients.Caller.SendAsync("ReceiveLastPublicMessages", messages);
+        }
     }
 }

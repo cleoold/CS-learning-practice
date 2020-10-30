@@ -37,7 +37,7 @@ namespace Chatroom.Server
                 app.UseWebAssemblyDebugging();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();

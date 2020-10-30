@@ -47,6 +47,9 @@
                 || (elemBottom > parentViewBottom && elemTop < parentViewBottom);
 
             return isTotal || isPartial;
+        },
+        isMobile: function () {
+            return window.innerWidth < 750;
         }
     }
 </script>

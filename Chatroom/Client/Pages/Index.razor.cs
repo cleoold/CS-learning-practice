@@ -9,10 +9,21 @@ namespace Chatroom.Pages
 
         private string usernameInput = null!;
 
-        private void GotoChatroom()
+        private bool showUsernameInvalidMessage = false;
+
+        private void TryGotoChatroom()
         {
-            if (!string.IsNullOrWhiteSpace(usernameInput))
+            if (string.IsNullOrWhiteSpace(usernameInput))
+            {
+                if (showUsernameInvalidMessage) // CS0414
+                    return;
+                showUsernameInvalidMessage = true;
+                StateHasChanged();
+            }
+            else
+            {
                 navigationManager.NavigateTo($"/User/{usernameInput}");
+            }
         }
     }
 }

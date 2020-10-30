@@ -4,8 +4,20 @@
     <!--if just use "@bind", then have to hit enter twice-->
     <input  placeholder="Username"
             @bind-value="usernameInput" @bind-value:event="oninput"
-            @onkeydown="@(e => { if (e.Code == "Enter") GotoChatroom(); })"
+            @onkeydown="@(e =>
+            {
+                showUsernameInvalidMessage = false;
+                if (e.Code == "Enter")
+                    TryGotoChatroom();
+            })"
     />
     <br />
-    <button @onclick="GotoChatroom">Enter</button>
+    <button @onclick="TryGotoChatroom">Enter</button>
+    @if (showUsernameInvalidMessage)
+    {
+        <span class="error-msg">Invalid username.</span>
+    }
+    <p class="i-agree">
+        By inputting the username and continuing with this chatroom, you agree that your conversation is public and your messages will be shared.
+    </p>
 </div>

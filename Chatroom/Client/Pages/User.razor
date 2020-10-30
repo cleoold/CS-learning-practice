@@ -1,13 +1,44 @@
 ﻿@page "/User/{username}"
 
+<AsyncRender TResult="bool" TInput="int" Input=0 AsyncOperation="@(_ => IsMobile)">
+    <DataReady Context="isMobile">
+        @if (isMobile)
+        {
+            <div class="mobile-top-bar">
+                <h1>chatroom</h1>
+                <div class="show-users" @onclick="MobileOnlySwitchUserList">
+                    <div style="@($"background-color:{(IsConnected ? "yellowgreen" : "coral")}")" />
+                </div>
+            </div>
+        }
+    </DataReady>
+    <DataMissing>
+    </DataMissing>
+</AsyncRender>
+
 <div class="chatarea">
+    <div class="fly-notice-box">
+        @if (!IsConnected)
+        {
+            <span class="fly-notice">⚠️ You are not connected.</span>
+        }
+        @if (HaveUnreadNewMessages)
+        {
+            <span class="fly-notice clickable" @onclick="ClickUnreadNewMessageFlyNotice">
+                New unread message(s)
+            </span>
+        }
+    </div>
     <div class="message-list-box">
+        <!--we are not monitoring scroll events to conditionally trigger ClickUnreadNewMessageFlyNotice()
+            because there is currently no c# way to throttle triggers or detect scroll direction-->
         <ul class="message-list">
             @foreach (var message in history)
             {
                 <li class="message">
                     <span class="message-user" style="@($"color:{message.User.Color}")">@message.User.Username</span>
                     <span class="message-time">@message.Time</span>
+                    <span class="message-time">@message.Time.ToLocalTime() in your timezone</span>
                     <br />
                     <p class="message-content">@message.Content</p>
                 </li>
@@ -28,16 +59,25 @@
     </div>
 </div>
 
-<div class="userlist-box">
-    <ul class="user-list">
-        <li class="userlist-title">
-            ONLINE - @allusers.Count
-        </li>
-        @foreach (var user in allusers.OrderBy(e => e.Username))
+<AsyncRender TResult="bool" TInput="int" Input=0 AsyncOperation="@(_ => IsMobile)">
+    <DataReady Context="isMobile">
+        @if (!isMobile || MobileOnlyUserListSwitchedIn)
         {
-            <li class="user-list-item" style="@($"color:{user.Color}")">
-                @user.Username
-            </li>
+            <div class="userlist-box">
+                <ul class="user-list">
+                    <li class="userlist-title">
+                        ONLINE - @allusers.Count
+                    </li>
+                    @foreach (var user in allusers.OrderBy(e => e.Username))
+                    {
+                        <li class="user-list-item" style="@($"color:{user.Color}")">
+                            @user.Username
+                        </li>
+                    }
+                </ul>
+            </div>
         }
-    </ul>
-</div>
+    </DataReady>
+    <DataMissing>
+    </DataMissing>
+</AsyncRender>
