@@ -11,11 +11,10 @@ namespace Chatroom.Pages
 {
     internal class RetryPolicy : IRetryPolicy
     {
-        private int count = 0;
         private static TimeSpan span = TimeSpan.FromSeconds(5);
         public TimeSpan? NextRetryDelay(RetryContext ctx)
         {
-            if (count++ < 10)
+            if (ctx.PreviousRetryCount < 10)
                 return span;
             return null;
         }
@@ -35,6 +34,8 @@ namespace Chatroom.Pages
         private SUser user { get => new SUser { Username = username }; }
 
         private HubConnection hubConnection;
+
+        private DateTime? lastConnectedTime = null;
 
         private List<PublicMessage> history = new List<PublicMessage>();
 
@@ -57,16 +58,26 @@ namespace Chatroom.Pages
 
             await hubConnection.StartAsync();
 
-            await hubConnection.SendAsync("NotifyAboutLogin", user);
+            await hubConnection.SendAsync("NotifyAboutLogin", user, null);
 
             await js.InvokeVoidAsync("chatroom.setTitle", $"@{username} - chatroom");
         }
 
         private void RegisterHubEvents()
         {
-            hubConnection.Reconnected += _ => InvokeAsync(StateHasChanged);
-            hubConnection.Reconnecting += _ => InvokeAsync(StateHasChanged);
             hubConnection.Closed += _ => InvokeAsync(StateHasChanged);
+
+            hubConnection.Reconnecting += _ =>
+            {
+                lastConnectedTime = DateTime.UtcNow;
+                return InvokeAsync(StateHasChanged);
+            };
+
+            hubConnection.Reconnected += async _/*newId*/ =>
+            {
+                await hubConnection.SendAsync("NotifyAboutLogin", user, lastConnectedTime);
+                StateHasChanged();
+            };
 
             hubConnection.On<List<PublicMessage>>("ReceiveLastPublicMessages", messages =>
             {

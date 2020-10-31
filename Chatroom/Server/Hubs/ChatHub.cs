@@ -50,7 +50,7 @@ namespace Chatroom.Server.Hubs
             await ReceiveUserList();
         }
 
-        public async Task NotifyAboutLogin(User user)
+        public async Task NotifyAboutLogin(User user, DateTime? lastConnectedTime)
         {
             var now = utcNow;
             _logger.LogInformation($"[{now}] [ADMIN] {user.Username} connected.");
@@ -58,7 +58,7 @@ namespace Chatroom.Server.Hubs
             user.Color = $"hsla({_random.Next(1,360)},100%,50%,1)";
             _connectedUsers[Context.ConnectionId] = user;
 
-            await Task.WhenAll(ReceiveLastPublicMessages(), ReceiveUserList());
+            await Task.WhenAll(ReceiveLastPublicMessages(lastConnectedTime), ReceiveUserList());
 
             var mymsg = new PublicMessage
             {
@@ -106,11 +106,12 @@ namespace Chatroom.Server.Hubs
         public Task ReceiveUserList()
             => Clients.All.SendAsync("ReceiveUserList", _connectedUsers.Values.ToList());
 
-        public Task ReceiveLastPublicMessages()
+        public Task ReceiveLastPublicMessages(DateTime? lastConnectedTime)
         {
+            lastConnectedTime = lastConnectedTime ?? DateTime.MinValue;
             List<PublicMessage>? messages;
             lock (_lastMessages)
-                messages = _lastMessages.ToList();
+                messages = _lastMessages.Where(m => m.Time > lastConnectedTime).ToList();
             return Clients.Caller.SendAsync("ReceiveLastPublicMessages", messages);
         }
     }
